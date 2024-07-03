@@ -1,0 +1,3 @@
+[submodule "simpleaichat"]
+	path = simpleaichat
+	url = https://github.com/Toukaya/simpleaichat.git
