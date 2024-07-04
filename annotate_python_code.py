@@ -1,6 +1,9 @@
 import ast
 import os
+import time
+
 from simpleaichat.simpleaichat import AIChat
+
 
 def add_comments_to_code(code, ai):
     code_with_comment_chain_systemtemplate = """
@@ -26,32 +29,43 @@ def add_comments_to_code(code, ai):
         last_response = response_td  # 更新上一次的输出
     return response_td
 
+
 def process_file(file_path, output_dir, ai):
     with open(file_path, 'r', encoding='utf-8') as file:
         code = file.read()
 
     tree = ast.parse(code)
-
     functions = [node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
 
     commented_code = ""
-    # 遍历所有函数定义
     for function in functions:
-        # 获取函数定义的源代码
         function_source = ast.get_source_segment(code, function)
-        commented_code_td = add_comments_to_code(function_source, ai)
-        commented_code += commented_code_td
+        max_retries = 2  # Set the maximum number of retries
+        for attempt in range(max_retries + 1):
+            try:
+                commented_code_td = add_comments_to_code(function_source, ai)
+                commented_code += commented_code_td
+                break  # Break the loop if the call was successful
+            except Exception as e:
+                print(f"Attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries:
+                    print("Retrying...")
+                    time.sleep(1)  # Wait for a second before retrying
+                else:
+                    print("Max retries reached, skipping this function.")
+                    # Optionally, you can log the function that was skipped
+                    commented_code = f"# Failed to process function: {function.name}, message: {e} \n\n"
 
     os.makedirs(output_dir, exist_ok=True)
-
-    # 保存结果到目标文件
-    output_file_path = os.path.join(output_dir, os.path.basename(file_path)+'.md')
+    output_file_path = os.path.join(output_dir, os.path.basename(file_path) + '.md')
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(commented_code)
 
 
 def process_directory(start_dir, output_dir, ai):
-    for root, _, files in os.walk(start_dir):
+    skip_dirs = ['venv']  # 添加需要跳过的文件夹名称
+    for root, dirs, files in os.walk(start_dir, topdown=True):
+        dirs[:] = [d for d in dirs if d not in skip_dirs]  # 在遍历前修改dirs列表，排除需要跳过的文件夹
         for file in files:
             if file.endswith('.py'):
                 file_path = os.path.join(root, file)
@@ -61,12 +75,20 @@ def process_directory(start_dir, output_dir, ai):
                 output_file_path = os.path.join(output_dir, rel_path)
 
                 # 检查输出文件是否已存在
-                if os.path.exists(output_file_path):
+                if os.path.exists(output_file_path + '.md'):
                     print(f"Skipping {file_path} as it already exists in output directory.")
                     continue
 
                 output_path = os.path.dirname(output_file_path)
                 process_file(file_path, output_path, ai)
+
+                print(
+                    """
+==========================================================================
+Processed {0} and saved to {1}.md
+==========================================================================
+                    """.format(file_path, output_file_path)
+                )
 
 
 if __name__ == "__main__":
