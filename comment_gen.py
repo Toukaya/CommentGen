@@ -31,7 +31,7 @@ def get_split_chunks(max_chars: int, code: str, language) -> Generator[str, None
     Split the code into chunks that do not exceed max_chars using the given language for parsing.
     Yields each chunk lazily.
     """
-    code_splitter = CodeSplitter(language, max_chars)
+    code_splitter = CodeSplitter(language, max_chars, trim=False)
     for chunk in code_splitter.chunks(code):
         yield chunk
 
