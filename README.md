@@ -27,7 +27,7 @@ pip install tree_sitter tree_sitter_python semantic_text_splitter simpleaichat
 
 以下是运行脚本的命令行示例：
 ```bash
-python comment_gen.py <input_directory> <output_directory> --temperature <value> --max_tokens <value> --model <model_name> --base_url <base_url>
+python comment_gen.py <input_directory> <output_directory> --temperature <value> --max_tokens <value> --model <model_name> --base_url <base_url> --skip_dirs <dir1> <dir2> ...
 ```
 - `<input_directory>`: 包含Python文件的目录。
 - `<output_directory>`: 保存处理后文件的目录。
@@ -35,14 +35,7 @@ python comment_gen.py <input_directory> <output_directory> --temperature <value>
 - `--max_tokens`: AI模型的最大令牌数参数，默认为2000。
 - `--model`: 使用的AI模型名称，默认为"qwen-turbo"。
 - `--base_url`: AI服务的基础URL，默认为"https://dashscope.aliyuncs.com/compatible-mode/v1"。
-- `--skip_dirs`: 要跳过的目录列表，可以是空格分隔的多个目录，默认为`./.env`。
-
-## 示例
-以下是如何使用脚本的示例：
-
-```bash
-python comment_gen.py <input_directory> <output_directory> --temperature <value> --max_tokens <value> --model <model_name> --base_url <base_url> --skip_dirs <dir1> <dir2> ...
-```
+- `--skip_dirs`: 要跳过的目录列表，可以是空格分隔的多个目录，默认为`<output_directory>/.env`。
 
 ## 输出
 处理完成后，脚本将在指定的输出目录中生成以下文件：
