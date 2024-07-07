@@ -63,7 +63,7 @@ def process_file(file_path: Path, output_dir: Path, ai: AIChat):
         return
 
     commented_code = ""
-    for chunk in get_split_chunks(1000, code, tree_sitter_python.language()):
+    for chunk in get_split_chunks(800, code, tree_sitter_python.language()):
         commented_code += add_comments_to_code(chunk, ai)
 
     save_markdown(commented_code, file_path, output_dir)
@@ -97,12 +97,16 @@ def save_processed_code(commented_code: str, file_path: Path, output_dir: Path):
     logging.info(f"Saved processed code to {output_file_path}")
 
 
-def process_directory(start_dir: Path, output_dir: Path, ai: AIChat):
+def process_directory(start_dir: Path, output_dir: Path, ai: AIChat, skip_dirs: list[Path] = None):
     """
     Process all Python files in a directory, add comments, and save the output.
     Uses Pathlib for path manipulations and logs each file processed.
     """
     for file_path in start_dir.rglob('*.py'):
+        # 检查文件路径是否包含要跳过的文件夹名
+        if any(Path(part) in skip_dirs for part in file_path.parents):
+            logging.info(f"Skipping {file_path} as it is in a skipped directory.")
+            continue
         rel_path = file_path.relative_to(start_dir)
         output_file_path = output_dir / rel_path
 
@@ -122,6 +126,8 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="qwen-turbo", help="Model name for the AI.")
     parser.add_argument("--base_url", type=str, default="https://dashscope.aliyuncs.com/compatible-mode/v1",
                         help="Base URL for the AI service.")
+    parser.add_argument("--skip_dirs", nargs="*", type=Path, default=[Path('.env')],
+                        help="Directories to skip, separated by spaces.")
 
     args = parser.parse_args()
     input_directory = Path(args.input_directory)
@@ -139,6 +145,12 @@ if __name__ == "__main__":
         base_url=args.base_url
     )
 
-    process_directory(input_directory, output_directory, ai)
-    ai.delete_session()
+    skip_dirs = [input_directory / Path(skip_dir) for skip_dir in args.skip_dirs]
+    process_directory(
+        input_directory,
+        output_directory,
+        ai,
+        skip_dirs=skip_dirs
+    )
+    ai.delete_session(id="code_commenter")
     logging.info("Processing complete.")

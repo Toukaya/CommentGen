@@ -1,4 +1,4 @@
-# Code Comment Generator
+[# Code Comment Generator
 
 ## 简介
 Code Comment Generator用于自动为Python代码文件添加中文注释。使用`simpleaichat`库与LLM交互，以生成注释。
@@ -35,12 +35,13 @@ python comment_gen.py <input_directory> <output_directory> --temperature <value>
 - `--max_tokens`: AI模型的最大令牌数参数，默认为2000。
 - `--model`: 使用的AI模型名称，默认为"qwen-turbo"。
 - `--base_url`: AI服务的基础URL，默认为"https://dashscope.aliyuncs.com/compatible-mode/v1"。
+- `--skip_dirs`: 要跳过的目录列表，可以是空格分隔的多个目录，默认为`./.env`。
 
 ## 示例
 以下是如何使用脚本的示例：
 
 ```bash
-python comment_gen.py ./src ./out --temperature 0.5 --max_tokens 2500 --model qwen-turbo --base_url https://api.example.com
+python comment_gen.py <input_directory> <output_directory> --temperature <value> --max_tokens <value> --model <model_name> --base_url <base_url> --skip_dirs <dir1> <dir2> ...
 ```
 
 ## 输出
@@ -57,3 +58,4 @@ python comment_gen.py ./src ./out --temperature 0.5 --max_tokens 2500 --model qw
 
 ## 许可
 本项目采用[MIT许可](LICENSE)。
+]()
