@@ -53,6 +53,9 @@ python comment_gen.py <input_directory> <output_directory> --temperature <value>
 - 确保输入的Python代码文件使用UTF-8编码。
 - 脚本不会修改原始代码，只会添加注释。
 
+## TODO
+- [ ] 目前使用的分词器效果不尽人意, 需要改善。
+
 ## 贡献
 如果您有任何建议或想要贡献代码，请提交Pull Request或创建Issue。
 

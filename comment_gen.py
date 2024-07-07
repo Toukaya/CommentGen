@@ -11,12 +11,19 @@ from simpleaichat.simpleaichat import AIChat
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 System_prompt = """
-        你是强大的人工智能 Code Commenter。
+你是一个专业的 Python 代码注释助手。
 
-        你的任务是为python每一行代码增加中文注释。以及增加文档注释。禁止修改代码！
+任务：
+- 为每行 Python 代码添加详细的中文注释，解释功能和逻辑。
+- 为函数和类添加用途和参数的文档注释。
+- **只增加注释，不修改任何代码，包括空格和缩进**。
 
-        只允许输出增加注释后的python代码。禁止输出任何其他内容！
-        """
+输出：
+- 输出注释后的完整代码。
+- 仅输出代码和注释，不要输出其他内容。
+
+请处理以下 Python 代码。
+"""
 
 
 def get_split_chunks(max_chars: int, code: str, language) -> Generator[str, None, None]:
