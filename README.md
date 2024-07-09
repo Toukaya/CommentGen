@@ -1,4 +1,4 @@
-[# Code Comment Generator
+# Code Comment Generator
 
 ## 简介
 Code Comment Generator用于自动为Python代码文件添加中文注释。使用`simpleaichat`库与LLM交互，以生成注释。
@@ -54,4 +54,3 @@ python comment_gen.py <input_directory> <output_directory> --temperature <value>
 
 ## 许可
 本项目采用[MIT许可](LICENSE)。
-]()
